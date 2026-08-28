@@ -1,16 +1,19 @@
 import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Mail, Linkedin, Send, MapPin, Phone } from 'lucide-react';
+import { Github, Mail, Linkedin, Send, MapPin, Download, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast, Toaster } from 'sonner';
 import { MOCK_CONTACT } from '@/data/portfolio';
 
+const RESUME_URL = 'https://aka.doubaocdn.com/s/3vumJad5Og';
+
 const CONTACT_ITEMS = [
-  { icon: Mail, label: '邮箱', value: MOCK_CONTACT.email, href: `mailto:${MOCK_CONTACT.email}` },
-  { icon: MapPin, label: '所在地', value: '中国 · 上海', href: '#' },
-  { icon: Phone, label: '状态', value: 'Open to work', href: '#' },
+  { icon: Mail, label: '主邮箱', value: MOCK_CONTACT.email, href: `mailto:${MOCK_CONTACT.email}` },
+  { icon: Mail, label: '备用邮箱', value: MOCK_CONTACT.email2, href: `mailto:${MOCK_CONTACT.email2}` },
+  { icon: MapPin, label: '所在地', value: MOCK_CONTACT.location, href: '#' },
+  { icon: MessageCircle, label: '状态', value: MOCK_CONTACT.status, href: '#' },
 ];
 
 export default function ContactSection() {
@@ -36,7 +39,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="w-full py-20 md:py-28">
+    <section id="contact" className="w-full py-24 md:py-32 bg-gradient-to-b from-transparent via-[#00d4ff]/[0.02] to-transparent">
       <Toaster theme="dark" position="top-right" />
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <motion.div
@@ -53,7 +56,7 @@ export default function ContactSection() {
             联系我
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            有合作意向或想聊聊技术？随时欢迎通过以下方式联系我
+            有技术交流、项目合作或其他想法？欢迎随时联系我
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] mx-auto rounded-full mt-4" />
         </motion.div>
@@ -70,11 +73,11 @@ export default function ContactSection() {
             <div className="p-6 rounded-2xl bg-gradient-to-br from-[#00d4ff]/10 to-[#a78bfa]/10 border border-white/10 backdrop-blur-sm">
               <h3 className="font-['Space_Grotesk'] text-xl font-bold mb-4">让我们聊聊</h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                无论是工作机会、技术交流还是项目合作，都欢迎与我联系。
+                无论是技术交流、项目合作还是职业机会，都欢迎与我联系。
                 我通常会在 24 小时内回复邮件。
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {CONTACT_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const isExternal = item.href.startsWith('mailto:') || item.href.startsWith('http');
@@ -88,15 +91,28 @@ export default function ContactSection() {
                       <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-[#00d4ff]/10 transition-colors">
                         <Icon className="size-4 text-[#00d4ff]" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <div className="text-xs text-muted-foreground">{item.label}</div>
-                        <div className="text-sm text-foreground font-medium">{item.value}</div>
+                        <div className="text-sm text-foreground font-medium truncate">
+                          {item.value}
+                        </div>
                       </div>
                     </Tag>
                   );
                 })}
               </div>
             </div>
+
+            {/* Download resume */}
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full p-4 rounded-xl bg-gradient-to-r from-[#00d4ff]/10 to-[#a78bfa]/10 border border-white/10 hover:border-[#00d4ff]/40 hover:bg-[#00d4ff]/10 transition-all group"
+            >
+              <Download className="size-5 text-[#00d4ff]" />
+              <span className="text-sm font-medium text-foreground">下载简历 PDF</span>
+            </a>
 
             {/* Social links */}
             <div className="flex items-center gap-3 justify-center lg:justify-start">
@@ -178,7 +194,7 @@ export default function ContactSection() {
                 type="submit"
                 size="lg"
                 disabled={submitting}
-                className="w-full bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] text-[#0a0e1a] font-semibold h-12 hover:shadow-[0_0_30px_rgba(0_212_255_0.3)] transition-all"
+                className="w-full bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] text-[#0a0e1a] font-semibold h-12 hover:shadow-[0_0_30px_rgba(0_212_255_/_0.3)] transition-all"
               >
                 {submitting ? '发送中...' : '发送消息'}
                 <Send className="size-4 ml-2" />

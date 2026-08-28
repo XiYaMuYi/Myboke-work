@@ -6,7 +6,7 @@ export default function ExperienceSection() {
   const experiences = MOCK_EXPERIENCE;
 
   return (
-    <section id="experience" className="w-full py-20 md:py-28 bg-gradient-to-b from-transparent via-[#a78bfa]/[0.02] to-transparent">
+    <section id="experience" className="w-full py-24 md:py-32 bg-gradient-to-b from-transparent via-[#a78bfa]/[0.02] to-transparent">
       <div className="max-w-4xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -22,7 +22,7 @@ export default function ExperienceSection() {
             工作经历
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            从创业公司到头部大厂，在不同规模的团队中持续成长
+            从软件测试到 AI 工程，在不同规模的团队中持续成长
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] mx-auto rounded-full mt-4" />
         </motion.div>
@@ -51,7 +51,11 @@ export default function ExperienceSection() {
                   </div>
 
                   {/* Content card */}
-                  <div className={`w-full md:w-[calc(50%-2rem)] pl-12 md:pl-0 ${isLeft ? 'md:pr-8' : 'md:pl-8'}`}>
+                  <div
+                    className={`w-full md:w-[calc(50%-2rem)] pl-12 md:pl-0 ${
+                      isLeft ? 'md:pr-8' : 'md:pl-8'
+                    }`}
+                  >
                     <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm hover:border-[#00d4ff]/40 hover:bg-white/[0.06] transition-all group">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="size-8 rounded-lg bg-gradient-to-br from-[#00d4ff]/20 to-[#a78bfa]/20 flex items-center justify-center">
@@ -71,7 +75,10 @@ export default function ExperienceSection() {
 
                       <ul className="space-y-2">
                         {exp.description.map((desc, j) => (
-                          <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <li
+                            key={j}
+                            className="flex items-start gap-2 text-sm text-muted-foreground"
+                          >
                             <ChevronRight className="size-4 text-[#00d4ff] shrink-0 mt-0.5" />
                             <span>{desc}</span>
                           </li>

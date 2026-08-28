@@ -10,43 +10,27 @@ const NAV_ITEMS = [
   { label: 'Skills', href: '#skills' },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
+  { label: 'Education', href: '#education' },
   { label: 'Contact', href: '#contact' },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('#hero');
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 50);
-      // 计算当前激活的 section
-      const sections = NAV_ITEMS.map((item) => item.href);
-      for (const hash of sections) {
-        const el = document.querySelector(hash);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 120 && rect.bottom >= 120) {
-            setActiveSection(hash);
-            break;
-          }
-        }
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 50);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = (href: string) => (e: React.MouseEvent) => {
+  const handleNavClick = (href: string) => (e: React.MouseEvent) => {
     e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      history.pushState(null, '', href);
-    }
+    const id = href.replace('#', '');
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileOpen(false);
   };
 
   return (
@@ -60,36 +44,29 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 flex h-16 items-center justify-between">
         <a
           href="#hero"
-          onClick={scrollTo('#hero')}
+          onClick={handleNavClick('#hero')}
           className="flex items-center gap-2 text-foreground font-bold"
         >
           <div className="size-9 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#a78bfa] flex items-center justify-center">
             <Code2 className="size-5 text-[#0a0e1a]" />
           </div>
           <span className="font-['Space_Grotesk'] text-lg tracking-tight">
-            Alex<span className="text-[#00d4ff]">.dev</span>
+            蔡宏伟<span className="text-[#00d4ff]">.dev</span>
           </span>
         </a>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeSection === item.href;
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={scrollTo(item.href)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  isActive
-                    ? 'text-[#00d4ff] bg-[#00d4ff]/10'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-                }`}
-              >
-                {item.label}
-              </a>
-            );
-          })}
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={handleNavClick(item.href)}
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-white/5"
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         <div className="hidden md:block">
@@ -104,6 +81,7 @@ export default function Header() {
           </Button>
         </div>
 
+        {/* Mobile menu button */}
         {isMobile && (
           <Button
             variant="ghost"
@@ -129,26 +107,16 @@ export default function Header() {
             className="md:hidden overflow-hidden bg-[rgb(10_14_26_/_0.95)] backdrop-blur-xl border-b border-white/10"
           >
             <nav className="flex flex-col p-4 gap-1">
-              {NAV_ITEMS.map((item) => {
-                const isActive = activeSection === item.href;
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={(e) => {
-                      scrollTo(item.href)(e);
-                      setMobileOpen(false);
-                    }}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? 'text-[#00d4ff] bg-[#00d4ff]/10'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-                    }`}
-                  >
-                    {item.label}
-                  </a>
-                );
-              })}
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={handleNavClick(item.href)}
+                  className="px-4 py-3 rounded-lg text-sm font-medium transition-all text-muted-foreground hover:text-foreground hover:bg-white/5"
+                >
+                  {item.label}
+                </a>
+              ))}
               <Button
                 className="mt-2 bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] text-[#0a0e1a] font-semibold"
                 onClick={() => {

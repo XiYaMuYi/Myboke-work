@@ -8,14 +8,24 @@ import { MOCK_PROJECTS, type IProject } from '@/data/portfolio';
 
 type TabType = 'enterprise' | 'personal';
 
-const TABS: { key: TabType; label: string; icon: string; desc: string }[] = [
-  { key: 'enterprise', label: '企业赋能项目', icon: '🏢', desc: '业务价值驱动的工业级项目' },
-  { key: 'personal', label: '个人娱乐项目', icon: '🎮', desc: '好奇心与创造力的延伸' },
+const TABS: { key: TabType; label: string; icon: string }[] = [
+  { key: 'enterprise', label: '企业赋能项目', icon: '🏢' },
+  { key: 'personal', label: '个人娱乐项目', icon: '🎮' },
 ];
 
-function ProjectCard({ project, index, onOpen }: { project: IProject; index: number; onOpen: () => void }) {
+function ProjectCard({
+  project,
+  index,
+  onOpen,
+}: {
+  project: IProject;
+  index: number;
+  onOpen: () => void;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState('perspective(1000px) rotateX(0deg) rotateY(0deg)');
+  const [transform, setTransform] = useState(
+    'perspective(1000px) rotateX(0deg) rotateY(0deg)',
+  );
   const [glow, setGlow] = useState({ x: 50, y: 50 });
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -27,7 +37,9 @@ function ProjectCard({ project, index, onOpen }: { project: IProject; index: num
     const centerY = rect.height / 2;
     const rotateY = ((x - centerX) / centerX) * 8;
     const rotateX = ((centerY - y) / centerY) * 8;
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`);
+    setTransform(
+      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+    );
     setGlow({ x: (x / rect.width) * 100, y: (y / rect.height) * 100 });
   };
 
@@ -108,7 +120,15 @@ function ProjectCard({ project, index, onOpen }: { project: IProject; index: num
 
 const DEMO_VIDEO = 'https://www.w3schools.com/html/mov_bbb.mp4';
 
-function ProjectDetail({ project, open, onClose }: { project: IProject | null; open: boolean; onClose: () => void }) {
+function ProjectDetail({
+  project,
+  open,
+  onClose,
+}: {
+  project: IProject | null;
+  open: boolean;
+  onClose: () => void;
+}) {
   const [videoPlaying, setVideoPlaying] = useState(false);
 
   if (!project) return null;
@@ -123,7 +143,11 @@ function ProjectDetail({ project, open, onClose }: { project: IProject | null; o
 
         <div className="max-h-[85vh] overflow-y-auto">
           <div className="relative aspect-[16/9]">
-            <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover" />
+            <img
+              src={project.imageUrl}
+              alt={project.title}
+              className="w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-[#0a0e1a]/50 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <Badge
@@ -173,7 +197,11 @@ function ProjectDetail({ project, open, onClose }: { project: IProject | null; o
                     key={i}
                     className="relative aspect-video rounded-lg overflow-hidden border border-white/10 group"
                   >
-                    <img src={src} alt={`screenshot-${i}`} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <img
+                      src={src}
+                      alt={`screenshot-${i}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                   </div>
                 ))}
@@ -242,7 +270,7 @@ export default function ProjectsSection() {
   };
 
   return (
-    <section id="projects" className="w-full py-20 md:py-28">
+    <section id="projects" className="w-full py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

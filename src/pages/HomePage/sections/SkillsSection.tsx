@@ -1,13 +1,14 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Brain, Code, Palette, Rocket } from 'lucide-react';
+import { Brain, Cpu, Code, Database, Server } from 'lucide-react';
 import { MOCK_SKILLS, type ISkillCategory } from '@/data/portfolio';
 
 const ICON_MAP: Record<string, typeof Brain> = {
-  'AI / ML': Brain,
+  'AI / LLM 工程': Brain,
+  '模型部署与推理': Cpu,
   '后端开发': Code,
-  '前端开发': Palette,
-  'DevOps / 工具': Rocket,
+  '数据处理与检索': Database,
+  'DevOps / 部署工具': Server,
 };
 
 function SkillCard({ category, index }: { category: ISkillCategory; index: number }) {
@@ -65,7 +66,7 @@ export default function SkillsSection() {
   const skills = MOCK_SKILLS;
 
   return (
-    <section id="skills" className="w-full py-20 md:py-28 bg-gradient-to-b from-transparent via-[#00d4ff]/[0.02] to-transparent">
+    <section id="skills" className="w-full py-24 md:py-32 bg-gradient-to-b from-transparent via-[#00d4ff]/[0.02] to-transparent">
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -81,7 +82,7 @@ export default function SkillsSection() {
             技术栈
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            覆盖 AI 工程化、后端架构、前端交互与云原生部署的全栈能力
+            覆盖 AI 工程化、模型部署、后端开发、数据检索与 DevOps 的全栈能力
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] mx-auto rounded-full mt-4" />
         </motion.div>

@@ -1,19 +1,35 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Zap, Globe, Shield } from 'lucide-react';
+import { Sparkles, Briefcase, Activity, TrendingDown } from 'lucide-react';
 import { MOCK_PERSONAL_INFO } from '@/data/portfolio';
 
 const HIGHLIGHTS = [
-  { icon: Sparkles, label: '5年+ 开发经验', value: '资深工程师' },
-  { icon: Zap, label: '20+ 项目交付', value: '全栈落地' },
-  { icon: Globe, label: '千万级 DAU 支撑', value: '高并发' },
-  { icon: Shield, label: '99.99% SLA', value: '高可用' },
+  {
+    icon: Briefcase,
+    title: '5年+ 工程经验',
+    subtitle: '从测试到AI全栈',
+  },
+  {
+    icon: Sparkles,
+    title: '5个 企业AI项目',
+    subtitle: 'RAG / 对话 / 微调',
+  },
+  {
+    icon: Activity,
+    title: '500+ QPS 承载',
+    subtitle: '高并发稳定运行',
+  },
+  {
+    icon: TrendingDown,
+    title: '42% 客服量减少',
+    subtitle: 'AI降本增效成果',
+  },
 ];
 
 export default function AboutSection() {
   const info = MOCK_PERSONAL_INFO;
 
   return (
-    <section id="about" className="w-full py-20 md:py-28">
+    <section id="about" className="w-full py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -23,7 +39,7 @@ export default function AboutSection() {
           className="text-center mb-16"
         >
           <span className="text-[#00d4ff] text-sm font-semibold tracking-widest uppercase">
-            About Me
+            About
           </span>
           <h2 className="font-['Space_Grotesk'] text-3xl md:text-4xl font-bold mt-3 mb-4">
             关于我
@@ -31,7 +47,7 @@ export default function AboutSection() {
           <div className="w-16 h-1 bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] mx-auto rounded-full" />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Avatar */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -43,15 +59,14 @@ export default function AboutSection() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#a78bfa] rounded-full blur-2xl opacity-30 scale-110" />
               <div className="relative size-56 md:size-64 rounded-full p-[2px] bg-gradient-to-br from-[#00d4ff] via-[#60a5fa] to-[#a78bfa]">
-                <div className="size-full rounded-full bg-[#0a0e1a] flex items-center justify-center overflow-hidden">
+                <div className="size-full rounded-full bg-[#0a0e1a] overflow-hidden">
                   <img
                     src={info.avatarUrl}
                     alt={info.name}
-                    className="size-full object-cover"
+                    className="w-full h-full object-cover object-[50%_20%]"
                   />
                 </div>
               </div>
-              {/* Floating badges */}
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
@@ -79,7 +94,7 @@ export default function AboutSection() {
           >
             <div className="space-y-4">
               {info.about.map((p, i) => (
-                <p key={i} className="text-lg text-muted-foreground leading-relaxed">
+                <p key={i} className="text-base md:text-lg text-muted-foreground leading-relaxed">
                   {p}
                 </p>
               ))}
@@ -108,7 +123,7 @@ export default function AboutSection() {
                 const Icon = item.icon;
                 return (
                   <motion.div
-                    key={item.label}
+                    key={item.title}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -121,10 +136,10 @@ export default function AboutSection() {
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-foreground">
-                          {item.value}
+                          {item.title}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {item.label}
+                          {item.subtitle}
                         </div>
                       </div>
                     </div>

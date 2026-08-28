@@ -7,13 +7,15 @@ import './index.css';
 
 function ErrorFallback({ error }: { error: Error }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-6">
-      <div className="max-w-md rounded-lg border border-border bg-card p-6">
-        <h1 className="mb-2 text-xl font-bold text-foreground">页面出错了</h1>
-        <p className="text-sm text-muted-foreground">{error.message}</p>
+    <div className="min-h-screen bg-[#0a0e1a] flex items-center justify-center p-6">
+      <div className="max-w-md w-full p-6 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-sm text-center">
+        <h2 className="text-2xl font-bold text-foreground mb-3">出现了一些问题</h2>
+        <p className="text-sm text-muted-foreground mb-4 font-mono break-all">
+          {error.message}
+        </p>
         <button
-          className="mt-4 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
           onClick={() => window.location.reload()}
+          className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] text-[#0a0e1a] font-medium text-sm"
         >
           刷新页面
         </button>

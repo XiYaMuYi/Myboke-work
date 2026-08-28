@@ -1,267 +1,263 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Github, Mail, Linkedin, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronDown, Github, Mail, Linkedin, ArrowRight, Download } from 'lucide-react';
 import { MOCK_PERSONAL_INFO, MOCK_CONTACT } from '@/data/portfolio';
 
-const HERO_IMG =
-  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80';
+const RESUME_URL = 'https://aka.doubaocdn.com/s/3vumJad5Og';
 
 export default function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const personalInfo = MOCK_PERSONAL_INFO;
+  const info = MOCK_PERSONAL_INFO;
   const contact = MOCK_CONTACT;
-  const [displayedText, setDisplayedText] = useState('');
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [displaySlogan, setDisplaySlogan] = useState('');
   const [showCursor, setShowCursor] = useState(true);
 
-  // Typewriter effect
+  // 打字机效果
   useEffect(() => {
-    const fullText = personalInfo.slogan;
     let i = 0;
     const timer = setInterval(() => {
-      if (i <= fullText.length) {
-        setDisplayedText(fullText.slice(0, i));
+      if (i < info.slogan.length) {
+        setDisplaySlogan(info.slogan.slice(0, i + 1));
         i++;
       } else {
         clearInterval(timer);
       }
     }, 80);
     return () => clearInterval(timer);
-  }, [personalInfo.slogan]);
+  }, [info.slogan]);
 
-  // Cursor blink
+  // 光标闪烁
   useEffect(() => {
-    const t = setInterval(() => setShowCursor((v) => !v), 530);
-    return () => clearInterval(t);
+    const timer = setInterval(() => {
+      setShowCursor((v) => !v);
+    }, 530);
+    return () => clearInterval(timer);
   }, []);
 
-  // Particle background
+  // 粒子网格背景
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let width = (canvas.width = canvas.offsetWidth * window.devicePixelRatio);
-    let height = (canvas.height = canvas.offsetHeight * window.devicePixelRatio);
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    let animationId: number;
 
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; color: string }[] = [];
-    const count = 80;
-    const colors = ['#00d4ff', '#a78bfa', '#60a5fa'];
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+    }
 
-    for (let i = 0; i < count; i++) {
+    const particleCount = Math.floor((width * height) / 18000);
+    const particles: Particle[] = [];
+
+    for (let i = 0; i < particleCount; i++) {
       particles.push({
-        x: Math.random() * canvas.offsetWidth,
-        y: Math.random() * canvas.offsetHeight,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.5 + 0.5,
       });
     }
 
-    let mouseX = -1000;
-    let mouseY = -1000;
+    let mouseX = width / 2;
+    let mouseY = height / 2;
 
     const onMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     };
-    canvas.addEventListener('mousemove', onMouseMove);
 
     const onResize = () => {
-      width = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      height = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     };
+
+    window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('resize', onResize);
 
-    let animId: number;
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
 
-      for (const p of particles) {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // 鼠标吸引
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          p.vx += (dx / dist) * 0.02;
+          p.vy += (dy / dist) * 0.02;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > canvas.offsetWidth) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.offsetHeight) p.vy *= -1;
+        // 阻尼
+        p.vx *= 0.99;
+        p.vy *= 0.99;
 
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          const force = (120 - dist) / 120;
-          p.x += (dx / dist) * force * 1.5;
-          p.y += (dy / dist) * force * 1.5;
-        }
+        // 边界
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
 
+        // 画粒子
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 212, 255, 0.6)';
         ctx.fill();
       }
 
+      // 连线
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            const alpha = (1 - dist / 130) * 0.25;
-            ctx.strokeStyle = `rgba(0, 212, 255, ${alpha})`;
-            ctx.lineWidth = 0.5;
+          if (dist < 120) {
+            const opacity = (1 - dist / 120) * 0.3;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(167, 139, 250, ${opacity})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
       }
 
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
+      animationId = requestAnimationFrame(animate);
+    }
+
+    animate();
 
     return () => {
-      cancelAnimationFrame(animId);
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', onResize);
-      canvas.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 
   return (
     <section
       id="hero"
-      className="relative w-full min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Background image */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={HERO_IMG}
-          alt="hero background"
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e1a]/80 via-[#0a0e1a]/60 to-[#0a0e1a]" />
-      </div>
-
       {/* Particle canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-10 w-full h-full"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 z-[11] opacity-20 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(0,212,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 70%)',
-        }}
-      />
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0e1a]/40 to-[#0a0e1a] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 size-96 bg-[#00d4ff]/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 size-80 bg-[#a78bfa]/20 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-20 max-w-5xl mx-auto px-4 md:px-6 text-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="mb-6"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-sm text-muted-foreground">
-            <span className="relative flex size-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00d4ff] opacity-75" />
-              <span className="relative inline-flex rounded-full size-2 bg-[#00d4ff]" />
-            </span>
-            正在寻找新机会 · Available for hire
+          <span className="size-2 rounded-full bg-[#00d4ff] animate-pulse" />
+          <span className="text-sm text-muted-foreground">
+            欢迎技术交流与项目合作
           </span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: 'easeOut' }}
-          className="font-['Space_Grotesk'] text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4 leading-[1.1]"
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="font-['Space_Grotesk'] text-5xl md:text-7xl font-bold mb-6 leading-tight"
         >
-          <span className="text-foreground">Hi, I&apos;m </span>
-          <span className="bg-gradient-to-r from-[#00d4ff] via-[#60a5fa] to-[#a78bfa] bg-clip-text text-transparent">
-            {personalInfo.name}
+          你好，我是
+          <span className="bg-gradient-to-r from-[#00d4ff] via-[#a78bfa] to-[#00d4ff] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-x">
+            {' '}{info.name}
           </span>
         </motion.h1>
 
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
-          className="font-['Space_Grotesk'] text-2xl md:text-3xl font-semibold mb-6 text-[#00d4ff]"
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="text-2xl md:text-3xl font-medium text-foreground mb-4"
         >
-          {personalInfo.title}
-        </motion.h2>
+          {info.title}
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
-          className="text-lg md:text-xl text-muted-foreground mb-10 min-h-[2rem]"
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="text-lg md:text-xl text-muted-foreground mb-12 min-h-[2em] font-mono"
         >
-          {displayedText}
-          <span
-            className={`inline-block w-[3px] h-5 ml-1 align-middle bg-[#00d4ff] ${
-              showCursor ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
+          {displaySlogan}
+          <span className={`${showCursor ? 'opacity-100' : 'opacity-0'} text-[#00d4ff] ml-1`}>
+            |
+          </span>
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55, ease: 'easeOut' }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="flex flex-wrap items-center justify-center gap-4 mb-16"
         >
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-[#00d4ff] to-[#0ea5e9] text-[#0a0e1a] font-semibold h-12 px-8 hover:shadow-[0_0_30px_rgba(0_212_255_0.4)] transition-all group"
+          <button
             onClick={() => {
               document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
             }}
+            className="inline-flex items-center gap-2 h-12 px-8 rounded-md bg-gradient-to-r from-[#00d4ff] to-[#a78bfa] text-[#0a0e1a] font-semibold hover:opacity-90 transition-all shadow-[0_0_30px_rgba(0_212_255_/_0.3)]"
           >
             查看项目
-            <ArrowRight className="size-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="h-12 px-8 border-white/20 text-foreground hover:bg-white/5 backdrop-blur-sm"
+            <ArrowRight className="size-4" />
+          </button>
+          <button
             onClick={() => {
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
+            className="inline-flex items-center justify-center h-12 px-8 rounded-md border border-white/20 text-foreground hover:bg-white/5 backdrop-blur-sm text-sm font-medium transition-all"
           >
             联系我
-          </Button>
+          </button>
+          <a
+            href={RESUME_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center h-12 px-6 rounded-md border border-white/20 text-foreground hover:bg-white/5 backdrop-blur-sm text-sm font-medium transition-all"
+          >
+            <Download className="size-4 mr-2" />
+            下载简历
+          </a>
         </motion.div>
 
+        {/* Social links */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7, ease: 'easeOut' }}
-          className="flex items-center justify-center gap-4"
+          transition={{ duration: 0.8, delay: 0.9 }}
+          className="flex items-center justify-center gap-3"
         >
           <a
             href={contact.github}
             target="_blank"
             rel="noreferrer"
-            className="size-10 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 transition-all"
+            className="size-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 transition-all"
             aria-label="GitHub"
           >
             <Github className="size-5" />
           </a>
           <a
             href={`mailto:${contact.email}`}
-            className="size-10 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 transition-all"
+            className="size-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 transition-all"
             aria-label="Email"
           >
             <Mail className="size-5" />
@@ -270,7 +266,7 @@ export default function HeroSection() {
             href={contact.linkedin}
             target="_blank"
             rel="noreferrer"
-            className="size-10 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 transition-all"
+            className="size-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-[#00d4ff] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10 transition-all"
             aria-label="LinkedIn"
           >
             <Linkedin className="size-5" />
@@ -278,19 +274,19 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Scroll down indicator */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-muted-foreground"
+        transition={{ duration: 1, delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-muted-foreground"
       >
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
+        <span className="text-xs tracking-widest uppercase">向下滚动</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <ChevronDown className="size-5 text-[#00d4ff]" />
+          <ChevronDown className="size-5" />
         </motion.div>
       </motion.div>
     </section>
