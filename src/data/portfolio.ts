@@ -259,7 +259,7 @@ export const MOCK_PROJECTS: IProject[] = [
 export const MOCK_EXPERIENCE: IExperience[] = [
   {
     id: '1',
-    period: '2025.06 - 至今',
+    period: '2026.06 - 至今',
     company: '浙江神首生物科技集团',
     position: 'AI FDE 部署工程师',
     description: [
@@ -271,7 +271,7 @@ export const MOCK_EXPERIENCE: IExperience[] = [
   },
   {
     id: '2',
-    period: '2024.05 - 2025.05',
+    period: '2024.05 - 2026.05',
     company: '深圳市立创电子商务有限公司',
     position: 'AI 应用开发工程师',
     description: [
